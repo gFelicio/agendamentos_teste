@@ -17,8 +17,10 @@
             @forelse ($patients as $patient)
                 <option value="{{ $patient->id }}"
                     name="patient_id"
-                    @if ($patient->id == $schedule->patient->id)
-                        selected="selected"
+                    @if ($routeName == 'schedules.edit')
+                        @if ($patient->id == $schedule->patient->id)
+                            selected="selected"
+                        @endif
                     @endif>
                     {{ $patient->name }}
                 </option>
