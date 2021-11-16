@@ -12,9 +12,11 @@
             {{ $patient->email }}
         </p>
 
-        <a href="{{ route('patients.edit', $patient->id) }}"
-            class="btn btn-primary">
-            Editar
-        </a>
+        @if ($patient->user_id == auth()->user()->id)
+            <a href="{{ route('patients.edit', $patient->id) }}"
+                class="btn btn-primary">
+                Editar
+            </a>
+        @endif
     </div>
 </div>

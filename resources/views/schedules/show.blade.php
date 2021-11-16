@@ -3,7 +3,10 @@
 @section('title', 'Agendamento '.$schedule->id)
 
 @section('content')
-    @include('components.edit_schedule_row')
+    @if ($schedule->user_id == auth()->user()->id)
+        @include('components.edit_schedule_row')
+    @endif
+
     <div id="resource-create-container"
         class="col-md-6 offset-md-3">
         <h1>Agendamento : : {{ $schedule->id }} </h1>

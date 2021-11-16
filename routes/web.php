@@ -23,5 +23,5 @@ Route::resource('patients', PatientController::class)->middleware('auth');
 Route::resource('schedules', ScheduleController::class)->middleware('auth');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+    return redirect()->route('schedules.index');
+});

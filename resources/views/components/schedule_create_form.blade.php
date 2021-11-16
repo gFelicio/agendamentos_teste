@@ -16,7 +16,10 @@
         @if ($routeName == 'schedules.create' || $routeName == 'schedules.edit')
             @forelse ($patients as $patient)
                 <option value="{{ $patient->id }}"
-                    name="patient_id">
+                    name="patient_id"
+                    @if ($patient->id == $schedule->patient->id)
+                        selected="selected"
+                    @endif>
                     {{ $patient->name }}
                 </option>
             @empty
@@ -35,6 +38,20 @@
     </select>
 </div>
 
+@if ($routeName == 'schedules.show')
+    <div class="form-group">
+        <label for="user_id">
+            Médico
+        </label>
+        <input type="text"
+            class="form-control"
+            name="user_id"
+            id="user_id"
+            disabled="disabled"
+            value="{{ $schedule->user->name }}">
+    </div>
+@endif
+
 <div class="form-group">
     <label for="date_set">
         Data Marcada
@@ -45,9 +62,9 @@
         id="date_set"
         @if ($routeName == 'schedules.show')
             disabled="disabled"
-            value="{{ $schedule->date_set }}"
+            value="{{ date_format(date_create($schedule->date_set), 'Y-m-d\TH:i') }}"
         @elseif ($routeName == 'schedules.edit')
-            value="{{ date_format(date_create($schedule->date_set), 'd/m/Y - H:i') }}"
+            value="{{ date_format(date_create($schedule->date_set), 'Y-m-d\TH:i') }}"
         @endif>
 </div>
 

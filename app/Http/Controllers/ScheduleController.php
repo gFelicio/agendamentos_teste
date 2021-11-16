@@ -102,7 +102,20 @@ class ScheduleController extends Controller
      */
     public function edit(Schedule $schedule)
     {
-        //
+        $returns['routeName'] = Route::currentRouteName();
+
+        if ($schedule->id) {
+            if ($schedule->user_id != auth()->user()->id) {
+                return redirect()
+                    ->route('schedules.show', $schedule->id)
+                ->with('msg-error', 'Não é possível editar um agendamento inserido por outro usuário.');
+            }
+        }
+
+        $returns['patients'] = Patient::all();
+        $returns['schedule'] = $schedule;
+
+        return view('schedules.edit', $returns);
     }
 
     /**
@@ -114,7 +127,33 @@ class ScheduleController extends Controller
      */
     public function update(Request $request, Schedule $schedule)
     {
-        //
+        $messages = [
+            'patient_id.required' => 'Paciente Obrigatório.',
+            'date_set.required' => 'Data de Atendimento Obrigatória.'
+        ];
+
+        $this->validate($request, [
+            'patient_id' => 'required',
+            'date_set' => 'required'
+        ], $messages);
+
+        $data = $request->all();
+
+        $result = $schedule->fill([
+            'patient_id' => $data['patient_id'],
+            'date_set' => $data['date_set'],
+            'user_id' => $data['user_id']
+        ])->save();
+
+        if (!$result) {
+            return redirect()
+                ->route('schedules.show', $schedule->id)
+            ->with('msg-error', 'Agendamento não pode ser atualizado. Verifique os dados e tente novamente.');
+        }
+
+        return redirect()
+            ->route('schedules.show', $schedule->id)
+        ->with('msg-success', 'Agendamento atualizado com sucesso.');
     }
 
     /**
@@ -125,6 +164,16 @@ class ScheduleController extends Controller
      */
     public function destroy(Schedule $schedule)
     {
-        //
+        if ($schedule->user_id != auth()->user()->id) {
+            return redirect()
+                ->route('schedules.index')
+            ->with('msg-error', 'Você não pode excluir um agendamento inserido por outro usuário');
+        }
+
+        $schedule->delete();
+
+        return redirect()
+            ->route('schedules.index')
+        ->with('msg-success', 'Agendamento deletado com sucesso.');
     }
 }
